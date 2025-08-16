@@ -1,6 +1,7 @@
 import json
 import time
 import random
+# 웹 크롤링 할 때 사용하는 라이브러리
 import requests
 from bs4 import BeautifulSoup
 
@@ -12,23 +13,33 @@ session = requests.Session()
 session.headers.update(headers)
 
 def getWordData(word_id):
+    # 수월한 오류 관리를 위해 try문 사용
     try:
+        # 기초가되는 링크에 word_id를 이용해 각각 다른 단어에 접근
         response = session.get(f'{base_url}{word_id:09d}')
         if response.status_code == 200:
+            # 텅빈 딕셔너리 미리 생성
             word_data = {}
             soup = BeautifulSoup(response.text, 'html.parser')
+            # 각 영단어를 구분하기 위한 id 저장
             word_data['id'] = word_id
+            # 난이도가 있는지 확인 후 있으면 저장
             level_element = soup.select_one('.tit_cleanword .txt_cleanset')
             if level_element:
                 word_data['난이도'] = level_element.text.strip()
+            # 영단어 저장
             word_data['영단어'] = soup.select_one('.txt_cleanword').text.strip()
+            # 영단어 뜻을 리스트 형태로 저장하기 위한 작업
             mean_elements = soup.select('ul.list_mean .txt_mean')
             word_data['뜻'] = [mean.text.strip() for mean in mean_elements]
+            # 품사가 있는지 확인 후 있으면 저장
             type_element = soup.select_one('.tit_sort')
             if type_element:
                 word_data['품사'] = type_element.text.strip()
+            # 연단어의 변형 형태를 저장할 딕셔너리 생성
             changes_dict = {}
             change_items = soup.select('.list_sort li')
+            # 키와 벨류값으로 구분해 각각 저장
             for item in change_items:
                 key = item.select_one('.txt_sort').text.strip()
                 value_element = item.select_one('.link_word')
@@ -41,15 +52,15 @@ def getWordData(word_id):
                 word_data['형태'] = changes_dict
             return word_data
         else:
+            # 오류 발생시 오류 내역을 전송
             print(f"ID {word_id}: 오류 발생 (Status Code: {response.status_code})")
             return response.status_code
+    # 네트워크 오류는 거르기
     except requests.exceptions.RequestException as e:
         print(f"ID {word_id}: 네트워크 오류 발생 ({e})")
         return 999
 
-# --- 메인 로직 (핵심 변경 부분) ---
-
-# 1. 기존 데이터 로드
+# 기존 데이터 로드
 FILENAME = 'english_words.json'
 try:
     with open(FILENAME, 'r', encoding='UTF-8') as f:
@@ -60,7 +71,7 @@ except (FileNotFoundError, json.JSONDecodeError):
     words_data = []
     print("새로운 데이터 수집을 시작합니다.")
 
-# 2. 시작 word_id 설정
+# 시작 word_id 설정
 if words_data:
     # 데이터가 있으면 마지막 id 다음부터 시작
     word_id = words_data[-1]['id']
@@ -76,17 +87,16 @@ start_word_id = word_id + 1
 end_word_id = start_word_id + WORDS_TO_CRAWL -1
 
 
-# --- 메인 루프 ---
+# 메인 루프 시작
 while True:
     word_id += 1
 
     result = getWordData(word_id)
 
     if isinstance(result, dict):
-        # 3. 파일에 바로 쓰지 않고, 리스트에 추가
         words_data.append(result)
         print(f"ID {word_id}: '{result['영단어']}' 수집 성공 ({len(words_data)}개)")
-        sleep_time = random.uniform(0.3, 0.5)
+        sleep_time = random.uniform(0.2, 0.4)
     else:
         if result == 404:
             print(f"ID {word_id}: 페이지 없음 (404 Not Found). 건너뜁니다.")
