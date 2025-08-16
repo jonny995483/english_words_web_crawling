@@ -93,3 +93,4 @@ while True:
 
 print("\n--- 최종 수집 결과 ---")
 print(words_data)
+#d
