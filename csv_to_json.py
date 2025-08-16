@@ -16,20 +16,23 @@ with open(FILENAME, 'r', newline='', encoding='utf-8', errors='ignore') as f:
 
     for line in lines:
         dict1 = {'id': line[0], header[1]: line[1], header[2]: line[2], header[3]: line[3]}
+        # 변형1 있는 경우에만 추가
         if line[4]:
             dict1[header[4]] = line[4]
+        # 변형2 있는 경우에만 추가
         if line[5]:
             dict1[header[5]] = line[5]
 
+        #난이도 별로 나누기
         if line[3] == '초등':
             low.append(dict1)
-
         elif line[3] == '중고':
             middle.append(dict1)
-
         else:
             high.append(dict1)
 
+
+# json 파일 생성
 with open('english_words_low.json', 'w', encoding='UTF-8') as f:
     json.dump(low, f, ensure_ascii=False, indent=4)
 
