@@ -96,7 +96,7 @@ while True:
     if isinstance(result, dict):
         words_data.append(result)
         print(f"ID {word_id}: '{result['영단어']}' 수집 성공 ({len(words_data)}개)")
-        sleep_time = random.uniform(0.2, 0.4)
+        sleep_time = random.uniform(0.3, 0.4)
     else:
         if result == 404:
             print(f"ID {word_id}: 페이지 없음 (404 Not Found). 건너뜁니다.")
