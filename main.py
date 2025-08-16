@@ -9,8 +9,6 @@ headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
 words_data = []
 
-file_path = "C:\Users\jonny995483\Desktop"
-
 session = requests.Session()
 session.headers.update(headers)
 
@@ -93,4 +91,3 @@ while True:
 
 print("\n--- 최종 수집 결과 ---")
 print(words_data)
-#d
