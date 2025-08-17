@@ -12,7 +12,7 @@ with open(FILENAME, 'r', newline='', encoding='utf-8', errors='ignore') as f:
     high = []
     middle = []
     low = []
-
+    total = []
 
     for line in lines:
         dict1 = {'id': line[0], header[1]: line[1], header[2]: line[2], header[3]: line[3]}
@@ -23,6 +23,7 @@ with open(FILENAME, 'r', newline='', encoding='utf-8', errors='ignore') as f:
         if line[5]:
             dict1[header[5]] = line[5]
 
+        total.append(dict1)
         #난이도 별로 나누기
         if line[3] == '초등':
             low.append(dict1)
@@ -41,3 +42,6 @@ with open('english_words_middle.json', 'w', encoding='UTF-8') as f:
 
 with open('english_words_high.json', 'w', encoding='UTF-8') as f:
     json.dump(high, f, ensure_ascii=False, indent=4)
+
+with open('english_words_total.json', 'w', encoding='UTF-8') as f:
+    json.dump(total, f, ensure_ascii=False, indent=4)
